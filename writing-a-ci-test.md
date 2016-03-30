@@ -24,12 +24,11 @@
 	$ mkdir juju/src/github.com/juju/juju
 	$ cd  juju/src/github.com/juju/juju
 	$ git clone git@github.com:juju/juju.git .
-	$ cd juju
 	$ go get ./...
 	$ godeps -u depedencies.txt
 	$ make
 	$ go install ./...
-	$ go test github.com:juju/juju/... TODO(ro) BTA duration too long. Only features that take longer than a test run become targets.
+	$ go test ./... TODO(ro) BTA duration too long. Only features that take longer than a test run become targets.
 
 
 ## Try it out
@@ -37,7 +36,7 @@
 	$ export CONTROLLER_NAME=lxd-controller
 	$ juju bootstrap $CONTROLLER_NAME lxd --upload-tools
 	$ juju deploy mysql && juju deploy wordpress
-	$ juju add-relation wordpress
+	$ juju add-relation wordpress mysql
 	$ juju expose wordpress
 	$ juju status  ## note the wordpress IP
 	$ xdg-open http://<wordpress_address>
@@ -55,9 +54,6 @@ this writing -- destroy a controller that was created by a preveious version.
 	$ bzr branch lp:juju-ci-tools/repository
 	$ bzr branch lp:juju-ci-tools 
 	$ cd juju-ci-tools
-	## Do some bzr magic I don't get... TODO(ro) cognitive overload BTA
-	$ bzr branch lp:~sseman/juju-ci-tools/assess-min-version co:sseman-min-version 
-	$ bzr switch sseman-min-version 
 
 Other strange magic to use the CI test tools. TODO(ro) BTA WTF to get it setup.
 
