@@ -18,18 +18,18 @@
 
 ## Build Juju
 
+	$ sudo apt-get install juju-mongodb
 	$ mkdir ~/juju
 	$ gopath ~/juju
 	$ export PATH=$PATH:$HOME/juju/bin
 	$ mkdir juju/src/github.com/juju/juju
 	$ cd  juju/src/github.com/juju/juju
 	$ git clone git@github.com:juju/juju.git .
-	$ cd juju
 	$ go get ./...
 	$ godeps -u depedencies.txt
 	$ make
 	$ go install ./...
-	$ go test github.com:juju/juju/... TODO(ro) BTA duration too long. Only features that take longer than a test run become targets.
+	$ go test ./... TODO(ro) BTA duration too long. Only features that take longer than a test run become targets.
 
 
 ## Try it out
@@ -37,7 +37,7 @@
 	$ export CONTROLLER_NAME=lxd-controller
 	$ juju bootstrap $CONTROLLER_NAME lxd --upload-tools
 	$ juju deploy mysql && juju deploy wordpress
-	$ juju add-relation wordpress
+	$ juju add-relation mysql wordpress
 	$ juju expose wordpress
 	$ juju status  ## note the wordpress IP
 	$ xdg-open http://<wordpress_address>
@@ -55,21 +55,17 @@ this writing -- destroy a controller that was created by a preveious version.
 	$ bzr branch lp:juju-ci-tools/repository
 	$ bzr branch lp:juju-ci-tools 
 	$ cd juju-ci-tools
-	## Do some bzr magic I don't get... TODO(ro) cognitive overload BTA
-	$ bzr branch lp:~sseman/juju-ci-tools/assess-min-version co:sseman-min-version 
-	$ bzr switch sseman-min-version 
 
 Other strange magic to use the CI test tools. TODO(ro) BTA WTF to get it setup.
 
-	$ mkvirtualenv juju-ci-tools
+	$ sudo apt-get install virtualenv python-pip python-setuptools
+	$ virtualenv juju-ci-tools
 	$ pip install -r requirements.txt
-	$ pip install python-yaml
-	$ pip install py-yaml
 	$ pip install pyyaml
 	$ pip install boto
 	$ pip install mock
 	$ pip install python-jenkins
-	$ pip install python-novaclient 
+	$ pip install python-novaclient
 	$ mkdir ~/.juju  # Sadly the CI Tools require this for 2.x tests too. Martin is aware, but ...
 	$ vim ~/.juju/environments.yaml  
 		environments:
@@ -84,6 +80,7 @@ Other strange magic to use the CI test tools. TODO(ro) BTA WTF to get it setup.
 	$ juju autoload-credentials  # This pulls the aws creds and write it to a creds file
 	$ ln -s ~/.local/share/juju/credentials.yaml ~/.juju/  ## Link the creds file to the juju1 location for ci-tools
 	$ touch ~/.juju/clouds.yaml  # ci-tools requires this file, even if empty.
+	$ mkdir ~/tmp
 	$ mkdir ~/tmp/juju-ci-tools  # ci-tools puts output here.
 
 Next we need to make a test suite for ci-tools 
@@ -93,11 +90,14 @@ Next we need to make a test suite for ci-tools
 		install -m 644 template_test.py.tmpl tests/test_assess_NAMEHERE.py
 		sed -i -e "s/TEMPLATE/NAMEHERE/g" assess_NAMEHERE.py tests/test_assess_NAMEHERE.
 	$ # Rename the files with your fetaure branch in lieu of NAMEHERE
+	$ mv assess_NAMEHERE.py assess_NAMEHERE.py 
+	$ mv tests/test_assess_NAMEHERE.py tests/test_assess_NAMEHERE.py
 	$ # Search/replace internally to replace NAMEHERE with your feature moniker. 
 	$ # Edit edit edit
 	$ rm -rf ~/tmp/juju-ci-tools/*  # Empty this NOW, so it doesn't bomb after a run and you don't get your logs you might want.
 	$ export TEST_CONTROLLER_NAME=test-lxd-controller-name
-	$ date && python assess_min_version.py --series xenial --debug lxd ~/juju/bin/juju ~/tmp/juju-ci-tools --upload-tools  && echo "exit: $?"; date 	  $ Wait...
+	$ date && python assess_min_version.py --series xenial --debug lxd ~/juju/bin/juju ~/tmp/juju-ci-tools --upload-tools  && echo "exit: $?"; date 	  
+	$ Wait...
 
 
 
