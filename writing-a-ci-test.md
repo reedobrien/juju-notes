@@ -71,13 +71,21 @@ Other strange magic to use the CI test tools. TODO(ro) BTA WTF to get it setup.
 		environments:
 			lxd:
 				type: lxd
-				# this should make the lxd provider skip apt-get up{date|grade}
-				# which is slow, particularly on the hotel network. Alas, it
-				# doesn't work on my system.
-				enable-os-upgrades: false 
-
-	$ source ~/.aws/ro  ## Load some aws creds in the environment
-	$ juju autoload-credentials  # This pulls the aws creds and write it to a creds file
+				# this makes the lxd provider skip apt-get upgrade
+				# which is slow, particularly on a hotel network.
+				enable-os-upgrade: false 
+			aws:
+				type: ec2
+				enable-os-upgrade: false
+				default-series: xenial
+				region: us-west-1
+				access-key: <KEY>
+				secret-key: <KEY>
+				
+	# Load some aws creds in the environment
+	$ source ~/.aws/ro  
+	# This pulls the aws creds and write it to a creds file
+	$ juju autoload-credentials  
 	$ ln -s ~/.local/share/juju/credentials.yaml ~/.juju/  ## Link the creds file to the juju1 location for ci-tools
 	$ touch ~/.juju/clouds.yaml  # ci-tools requires this file, even if empty.
 	$ mkdir ~/tmp
@@ -85,18 +93,15 @@ Other strange magic to use the CI test tools. TODO(ro) BTA WTF to get it setup.
 
 Next we need to make a test suite for ci-tools 
 
-	$ make new-assess
-		install -m 755 template_assess.py.tmpl assess_NAMEHERE.py
-		install -m 644 template_test.py.tmpl tests/test_assess_NAMEHERE.py
-		sed -i -e "s/TEMPLATE/NAMEHERE/g" assess_NAMEHERE.py tests/test_assess_NAMEHERE.
-	$ # Rename the files with your fetaure branch in lieu of NAMEHERE
-	$ mv assess_NAMEHERE.py assess_NAMEHERE.py 
-	$ mv tests/test_assess_NAMEHERE.py tests/test_assess_NAMEHERE.py
-	$ # Search/replace internally to replace NAMEHERE with your feature moniker. 
+	$ make new-assess name=new_feature
+		install -m 755 template_assess.py.tmpl assess_new_feature.py
+		install -m 644 template_test.py.tmpl tests/test_assess_new_feature.py
+		sed -i -e "s/TEMPLATE/new_feature/g" assess_new_feature.py tests/test_assess_new_feature.py
+
 	$ # Edit edit edit
 	$ rm -rf ~/tmp/juju-ci-tools/*  # Empty this NOW, so it doesn't bomb after a run and you don't get your logs you might want.
 	$ export TEST_CONTROLLER_NAME=test-lxd-controller-name
-	$ date && python assess_min_version.py --series xenial --debug lxd ~/juju/bin/juju ~/tmp/juju-ci-tools --upload-tools  && echo "exit: $?"; date 	  
+	$ date && python assess_min_version.py --series xenial --debug lxd ~/juju/bin/juju ~/tmp/juju-ci-tools --upload-tools $TEST_CONTROLLER_NAME  && echo "exit: $?"; date 	  
 	$ Wait...
 
 
