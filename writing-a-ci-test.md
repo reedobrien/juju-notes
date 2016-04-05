@@ -61,7 +61,7 @@ this writing -- destroy a controller that was created by a preveious version.
 Other strange magic to use the CI test tools. TODO(ro) BTA WTF to get it setup.
 
 	$ sudo apt-get install virtualenv python-pip python-setuptools
-	$ virtualenv juju-ci-tools
+	$ virtualenv --system-site-packages juju-ci-tools
 	$ pip install -r requirements.txt
 	$ pip install pyyaml
 	$ pip install boto
