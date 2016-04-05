@@ -102,7 +102,7 @@ Next we need to make a test suite for ci-tools
 
 	$ # Edit edit edit
 	$ rm -rf ~/tmp/juju-ci-tools/*  # Empty this NOW, so it doesn't bomb after a run and you don't get your logs you might want.
-	$ export TEST_CONTROLLER_NAME=test-lxd-controller-name
+	$ export CONTROLLER_NAME=test-lxd-controller-name
 	$ date && python assess_min_version.py --series xenial --debug lxd ~/juju/bin/juju ~/tmp/juju-ci-tools  --upload-tools $CONTROLLER_NAME   && echo "exit: $?"; date 	  
 	$ Wait...
 
