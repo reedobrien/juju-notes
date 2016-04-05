@@ -15,6 +15,8 @@
 
 	$ sudo apt-get install lxd
 		...
+	$ sudo usermod -a -G lxd robrien
+	# Log out and back in to get new group permission
 
 ## Build Juju
 
@@ -46,7 +48,7 @@ Fill in the form and setup a blog... good enough if it worked. Destry it NOW,
 before you update master and build a new juju, the new version cannot -- as of
 this writing -- destroy a controller that was created by a preveious version. 
 
-	$ juju destroy-controller $CONTROLLER_NAME
+	$ juju destroy-controller --destroy-all-models -y $CONTROLLER_NAME
 
 
 ## Get ci tools and ci repository 
